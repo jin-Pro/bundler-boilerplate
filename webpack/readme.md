@@ -64,3 +64,20 @@ yarn add babel-loader css-loader style-loader
 >css-loader - css 파일을 해석
 
 >style-loader - css를 dom에 삽입
+
+
+### Plugin 설치
+
+```jsx
+yarn add html-webpack-plugin mini-css-extract-plugin interpolate-html-plugin @pmmmwh/react-refresh-webpack-plugin
+```
+
+> Plugin은 웹팩이 해석한 결과물을 처리하는 패키지이다.
+
+> html-webpack-plugin - html 파일에 번들링 된 js 파일을 삽입
+
+> mini-css-extract-plugin - js 파일과 css 파일을 분리
+
+> interpolate-html-plugin - html 파일에서 %ENV% 같은 템플릿 구문 사용 가능. 꼭 필요한 건 아니지만 CRA 기본 예제 파일에서 %PUBLIC_URL%을 사용하기 때문에 이를 변환하기 위해 설치
+
+> @pmmmwh/react-refresh-webpack-plugin - 좀 더 우수한 핫 리로드 패키지인 react-refresh 사용
