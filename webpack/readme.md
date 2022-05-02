@@ -49,3 +49,18 @@ yarn add webpack webpack-cli webpack-dev-server
 >  webpack-cli - 개발자가 맞춤형 웹팩 프로젝트를 설정할 때 속도를 높일 수 있는 유연한 명령 세트를 제공합니다
 
 > webpack-dev-server - 파일이 변화할 때마다 실시간으로 빌드하는 개발 서버 구동
+
+
+### loader 설치
+
+```jsx
+yarn add babel-loader css-loader style-loader
+```
+
+> loader는 웹팩이 파일을 빌드할 때 파일을 해석하기 위한 패키지이다.
+
+>babel-loader - jsx 파일과 최신 자바스크립트 문법을 변환(바벨과 연동)
+
+>css-loader - css 파일을 해석
+
+>style-loader - css를 dom에 삽입
