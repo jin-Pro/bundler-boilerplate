@@ -1,4 +1,4 @@
-function App() {
+const App = () => {
   return (
     <div>
       hi ~ jin-Pro Custom Webpack React

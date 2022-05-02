@@ -4,6 +4,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const InterpolateHtmlPlugin = require('interpolate-html-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 const devMode = process.env.NODE_ENV !== 'production';
 
 module.exports = {
@@ -93,6 +95,13 @@ module.exports = {
       )
     ),
     new InterpolateHtmlPlugin({ PUBLIC_URL: '' }),
+    new BundleAnalyzerPlugin({
+      analyzerMode : 'static',
+      reportFilename : 'bundle-report.html',
+      openAnalyzer : false,
+      generateStatsFile : true,
+      statsFilename : 'bundle-stats.json'
+    })
   ].concat(
     devMode ? [new ReactRefreshWebpackPlugin()] : [new MiniCssExtractPlugin()]
   ),
