@@ -81,3 +81,170 @@ yarn add html-webpack-plugin mini-css-extract-plugin interpolate-html-plugin @pm
 > interpolate-html-plugin - html 파일에서 %ENV% 같은 템플릿 구문 사용 가능. 꼭 필요한 건 아니지만 CRA 기본 예제 파일에서 %PUBLIC_URL%을 사용하기 때문에 이를 변환하기 위해 설치
 
 > @pmmmwh/react-refresh-webpack-plugin - 좀 더 우수한 핫 리로드 패키지인 react-refresh 사용
+
+
+### webpack config 설정
+
+```jsx
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const InterpolateHtmlPlugin = require('interpolate-html-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+
+const devMode = process.env.NODE_ENV !== 'production';
+
+module.exports = {
+  entry: './src/index.js',
+  resolve: {
+    extensions: ['.js', '.jsx'],
+  },
+  output: {
+    path: path.resolve(__dirname, 'build'),
+    filename: 'static/js/[name].[contenthash:8].js',
+    chunkFilename: 'static/js/[name].[contenthash:8].chunk.js',
+    assetModuleFilename: 'static/media/[name].[hash:8].[ext]',
+    clean: true,
+  },
+  devtool: devMode ? 'eval-source-map' : false,
+  devServer: {
+    port: 3000,
+    hot: true,
+    open: true,
+    client: {
+      overlay: true,
+      progress: true,
+    },
+  },
+  module: {
+    rules: [
+      {
+        oneOf: [
+          {
+            test: /\.(js|jsx)$/,
+            exclude: /node_modules/,
+            use: {
+              loader: 'babel-loader',
+              options: {
+                presets: [['@babel/preset-env', { targets: 'defaults' }]],
+                plugins: devMode ? ['react-refresh/babel'] : [],
+              },
+            },
+          },
+          {
+            test: /\.css$/i,
+            use: [
+              devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
+              'css-loader',
+            ],
+          },
+          {
+            test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+            type: 'asset',
+            parser: {
+              dataUrlCondition: {
+                maxSize: 10000,
+              },
+            },
+          },
+          {
+            type: 'asset/resource',
+            exclude: [/\.(js|jsx)$/, /\.html$/, /\.json$/, /^$/],
+          },
+        ],
+      },
+    ],
+  },
+  plugins: [
+    new HtmlWebpackPlugin(
+      Object.assign(
+        {},
+        {
+          template: 'public/index.html',
+        },
+        !devMode
+          ? {
+              minify: {
+                removeComments: true,
+                collapseWhitespace: true,
+                removeRedundantAttributes: true,
+                useShortDoctype: true,
+                removeEmptyAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                keepClosingSlash: true,
+                minifyJS: true,
+                minifyCSS: true,
+                minifyURLs: true,
+              },
+            }
+          : undefined
+      )
+    ),
+    new InterpolateHtmlPlugin({ PUBLIC_URL: '' }),
+  ].concat(
+    devMode ? [new ReactRefreshWebpackPlugin()] : [new MiniCssExtractPlugin()]
+  ),
+};
+```
+
+> css-loader 문서에서 개발 빌드에선 style-loader를 사용하고 프로덕션 빌드에선 mini-css-extract-plugin을 권장한다.
+
+> file-loader와 url-loader를 사용하는데 webpack 5부턴 자체적으로 지원해서 사용하지 않았다.
+
+### script 추가
+
+```jsx
+"scripts": {
+  "start": "webpack serve --progress --mode development",
+  "build": "webpack --progress --mode production"
+}
+```
+
+### Webpack Bundle Analyzer 측정
+
+```jsx
+yarn add -D webpack-bundle-analyzer
+```
+
+```jsx
+// in webpack.config.js
+
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
+...
+
+plugins : [
+  ...
+  
+    new BundleAnalyzerPlugin({
+      analyzerMode : 'static',
+      reportFilename : 'bundle-report.html',
+      openAnalyzer : false,
+      generateStatsFile : true,
+      statsFilename : 'bundle-stats.json'
+    })
+  ]
+...
+
+```
+
+```jsx
+// in package.json
+
+...
+
+scripts : {
+  
+  ...
+
+  "build:report" : "webpack-bundle-analyzer --port 8888 dist/app-node-pl/assets/bundle-stats.json"
+}
+
+...
+
+```
+
+
+![](https://velog.velcdn.com/images/jinpro/post/3a78fdb9-a669-44db-a2e4-62540e800622/image.png)
+
+파일의 크기는 1.48 MB 이다.
