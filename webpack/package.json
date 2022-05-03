@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "sideEffects":false,
   "scripts": {
     "start": "webpack serve --progress --mode development",
     "build": "webpack --progress --mode production",
