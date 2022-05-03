@@ -15,6 +15,7 @@
     "react-dom": "^18.1.0"
   },
   "devDependencies": {
+    "@snowpack/plugin-webpack": "^3.0.0",
     "snowpack": "^3.8.8"
   }
 }
